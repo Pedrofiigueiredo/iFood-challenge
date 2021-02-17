@@ -1,8 +1,13 @@
+using System;
+using System.Collections.Specialized;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace iFoodOpenWeatherSpotify.Services
 {
@@ -15,11 +20,27 @@ namespace iFoodOpenWeatherSpotify.Services
     {
       this.httpClient = httpClient;
       settings = options.Value;
+    }
 
-      var token = "BQBsNEcnwIjphGjZXFhwbuL3Qep0dsAXx5Wp67_D0qy5Ie1UzM0I5dIS8-cRmhizFBWu8VKsBduCawUE43Q0NGFlYZ9ah8sewmHVsrh3gUQvmMRbRvPVKjvwKTxZTQuewtycv-bIA5Wsz_q5vPb7no-L4BVCa0LQffo";
+    public record Token(string access_token);
+    public async Task<string> Authentication()
+    {
+      var authHeader = Convert.ToBase64String(Encoding.Default.GetBytes($"{settings.SpotifyClientId}:{settings.SpotifyClientSecret}"));
+      var bodyParams = new NameValueCollection();
+      bodyParams.Add("grant_type", "client_credentials");
 
-      httpClient.DefaultRequestHeaders.Authorization = 
-        new AuthenticationHeaderValue("Bearer", token);
+      var webClient = new WebClient();
+      webClient.Headers.Add(HttpRequestHeader.Authorization, "Basic " + authHeader);
+
+      var tokenResponse = await webClient.UploadValuesTaskAsync("https://accounts.spotify.com/api/token", bodyParams);
+      var textResponse = Encoding.UTF8.GetString(tokenResponse);
+
+      var jsonResponse = JsonConvert.DeserializeObject<Token>(textResponse);
+
+      httpClient.DefaultRequestHeaders.Authorization =
+        new AuthenticationHeaderValue("Bearer", jsonResponse.access_token);
+
+      return jsonResponse.access_token;
     }
 
     public record Playlists(PlaylistItems[] items);
@@ -37,8 +58,8 @@ namespace iFoodOpenWeatherSpotify.Services
     }
 
     public record TrackItems(Track track);
-		public record Track(string name);
-		public record TrackData(TrackItems[] items);
+    public record Track(string name);
+    public record TrackData(TrackItems[] items);
 
     private async Task<TrackData> GetTracksFromPlaylistAsync(string playlistId)
     {
@@ -47,7 +68,7 @@ namespace iFoodOpenWeatherSpotify.Services
           $"{settings.SpotifyHost}/v1/playlists/{playlistId}/tracks"
         );
 
-			return tracks;
+      return tracks;
     }
 
     public async Task<TrackData> GetTracksByGenreAsync(string genre)

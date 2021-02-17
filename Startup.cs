@@ -30,6 +30,11 @@ namespace iFoodOpenWeatherSpotify
             services.Configure<ServiceSettings>(Configuration.GetSection(nameof(ServiceSettings)));
 
             services.AddControllers();
+
+            services.AddControllers().AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "iFoodOpenWeatherSpotify", Version = "v1" });

@@ -5,6 +5,7 @@ namespace iFoodOpenWeatherSpotify
     public string OpenWeatherHost { get; set; }
     public string OpenWeatherApiKey { get; set; }
     public string SpotifyHost { get; set; }
-    public string SpotifyApiKey { get; set; }
+    public string SpotifyClientId { get; set; }
+    public string SpotifyClientSecret { get; set; }
   }
 }
