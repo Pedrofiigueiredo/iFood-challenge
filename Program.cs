@@ -21,6 +21,13 @@ namespace iFoodOpenWeatherSpotify
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                })
+                .ConfigureLogging((context, logging) => {
+                    if (context.HostingEnvironment.IsProduction())
+                    {
+                        logging.ClearProviders();
+                        logging.AddJsonConsole();
+                    }
                 });
     }
 }

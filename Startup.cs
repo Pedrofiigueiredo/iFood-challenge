@@ -1,21 +1,16 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using iFoodOpenWeatherSpotify.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Polly;
 
 namespace iFoodOpenWeatherSpotify
 {
-    public class Startup
+  public class Startup
     {
         public Startup(IConfiguration configuration)
         {
@@ -36,8 +31,28 @@ namespace iFoodOpenWeatherSpotify
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "iFoodOpenWeatherSpotify", Version = "v1" });
             });
 
-            services.AddHttpClient<OpenWeatherService>();
-            services.AddHttpClient<SpotifyService>();
+            services.AddHttpClient<OpenWeatherService>()
+                .AddTransientHttpErrorPolicy(builder =>
+                    builder.WaitAndRetryAsync(10, retryAttempt => 
+                        TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
+                    )
+                )
+                .AddTransientHttpErrorPolicy(builder =>
+                    builder.CircuitBreakerAsync(3, TimeSpan.FromSeconds(10))
+                );
+
+            services.AddHttpClient<SpotifyService>()
+                .AddTransientHttpErrorPolicy(builder =>
+                    builder.WaitAndRetryAsync(10, retryAttempt => 
+                        TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
+                    )
+                )
+                .AddTransientHttpErrorPolicy(builder => 
+                    builder.CircuitBreakerAsync(3, TimeSpan.FromSeconds(10))
+                );
+
+            services.AddHealthChecks()
+                .AddCheck<ExternalEndpointHealthCheck>("OpenWeather");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -59,6 +74,7 @@ namespace iFoodOpenWeatherSpotify
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHealthChecks("/health");
             });
         }
     }
