@@ -58,14 +58,15 @@ namespace iFoodOpenWeatherSpotify.Services
     }
 
     public record TrackItems(Track track);
-    public record Track(string name);
+    public record Track(string name, string href, TrackArtists[] artists);
+    public record TrackArtists(string name);
     public record TrackData(TrackItems[] items);
 
     private async Task<TrackData> GetTracksFromPlaylistAsync(string playlistId)
     {
       var tracks = await httpClient
         .GetFromJsonAsync<TrackData>(
-          $"{settings.SpotifyHost}/v1/playlists/{playlistId}/tracks"
+          $"{settings.SpotifyHost}/v1/playlists/{playlistId}/tracks?limit=10"
         );
 
       return tracks;

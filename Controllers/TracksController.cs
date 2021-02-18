@@ -18,26 +18,38 @@ namespace iFoodOpenWeatherSpotify.Controllers
         this.spotifyService = spotifyService;
     }
 
-	[HttpGet("{:city}")]
+	[HttpGet("{city}")]
 	public async Task<dynamic> GetTracksSuggestions(string city)
 	{
-        var temperature = await openWeatherService.GetCurrentWeatherAsync(city);
+        var forecast = await openWeatherService.GetCurrentWeatherAsync(city);
+        decimal temperature = forecast.main.temp;
+
         await spotifyService.Authentication();
+        string genre = "";
 
         switch (temperature)
         {
             case > 30:
-                return await spotifyService.GetTracksByGenreAsync("party");
+                genre = "party";
+                break;
             case > 15:
-                return await spotifyService.GetTracksByGenreAsync("pop");
+                genre = "pop";
+                break;
             case > 10:
-                return await spotifyService.GetTracksByGenreAsync("rock");
+                genre = "rock";
+                break;
             case < 10:
-                return await spotifyService.GetTracksByGenreAsync("classical");
+                genre = "classical";
+                break;
         };
 
+        var tracks = await spotifyService.GetTracksByGenreAsync(genre);
+
         return new {
-            error = "Houve um erro ao buscar músicas"
+            temperature = forecast.main.temp,
+            city = forecast.name,
+            country = forecast.sys.country,
+            tracks = tracks.items
         };
 	}
   }

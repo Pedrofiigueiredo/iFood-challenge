@@ -17,16 +17,17 @@ namespace iFoodOpenWeatherSpotify.Services
     }
 
     public record Main(decimal temp);
-    public record Forecast(Main main);
+    public record Sys(string country);
+    public record Forecast(Main main, string name, Sys sys);
 
-    public async Task<decimal> GetCurrentWeatherAsync(string city)
+    public async Task<Forecast> GetCurrentWeatherAsync(string city)
     {
-      var forecast = await httpClient
-        .GetFromJsonAsync<Forecast>(
-          $"{settings.OpenWeatherHost}/data/2.5/weather?q=salvador&appid={settings.OpenWeatherApiKey}&units=metric"
-        );
+        var forecast = await httpClient
+          .GetFromJsonAsync<Forecast>(
+            $"{settings.OpenWeatherHost}/data/2.5/weather?q={city}&appid={settings.OpenWeatherApiKey}&units=metric"
+          );
 
-      return forecast.main.temp;
+        return forecast;
     }
   }
 }
