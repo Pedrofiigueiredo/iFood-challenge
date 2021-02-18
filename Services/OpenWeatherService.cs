@@ -19,14 +19,14 @@ namespace iFoodOpenWeatherSpotify.Services
     public record Main(decimal temp);
     public record Forecast(Main main);
 
-    public async Task<Forecast> GetCurrentWeatherAsync(string city)
+    public async Task<decimal> GetCurrentWeatherAsync(string city)
     {
       var forecast = await httpClient
         .GetFromJsonAsync<Forecast>(
-          $"{settings.OpenWeatherHost}/data/2.5/weather?q=salvador&appid={settings.OpenWeatherApiKey}"
+          $"{settings.OpenWeatherHost}/data/2.5/weather?q=salvador&appid={settings.OpenWeatherApiKey}&units=metric"
         );
 
-      return forecast;
+      return forecast.main.temp;
     }
   }
 }
