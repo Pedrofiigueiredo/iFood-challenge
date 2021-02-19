@@ -65,8 +65,11 @@ namespace iFoodOpenWeatherSpotify
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "iFoodOpenWeatherSpotify v1"));
             }
 
-            app.UseHttpsRedirection();
-
+            if (env.IsDevelopment())
+            {
+                app.UseHttpsRedirection();
+            }
+            
             app.UseRouting();
 
             app.UseAuthorization();
