@@ -72,35 +72,14 @@ Requisição: `GET v1/campinas`
 1. Faça um clone desse repositório
    `git clone https://github.com/Pedrofiigueiredo/iFood-challenge`
 
-2. Configure as variáveis ambiente
-   * Adicione o seguinte código em `appsettings.json`
-   ```
-   "ServiceSettings": {
-    "OpenWeatherHost": "http://api.openweathermap.org",
-    "SpotifyHost": "https://api.spotify.com"
-   },
-   ```
+2. Configure as variáveis ambiente pelo termial
 
-   * Cire um arquivo `ServiceSettings.cs` na raíz do projeto com o seguinte código:
-   ```
-   namespace iFoodOpenWeatherSpotify
-   {
-      public class ServiceSettings
-      {
-         public string OpenWeatherHost { get; set; }
-         public string OpenWeatherApiKey { get; set; }
-         public string SpotifyHost { get; set; }
-         public string SpotifyClientId { get; set; }
-         public string SpotifyClientSecret { get; set; }
-      }
-   }
-   ```
-
-   * Adicione as variáveis secretas:
    `dotnet user-secrets init`  
    `dotnet user-secrets set ServiceSettings:OpenWeatherApiKey {SUA_CHAVE}`  
    `dotnet user-secrets set ServiceSettings:SpotifyClientId {SEU_ID}`
    `dotnet user-secrets set ServiceSettings:SpotifyClientSecret {SEU_SECRET}`
+   
+   `obs`: Vocẽ pode usar o comando `dotnet user-secrets list` para ver as variáveis adicionadas.
 
 3. Para rodar utilize o comando `dotnet run`. O servidor irá iniciar em `https://localhost:5001`.
 
