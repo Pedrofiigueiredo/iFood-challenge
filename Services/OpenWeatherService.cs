@@ -30,7 +30,7 @@ namespace iFoodOpenWeatherSpotify.Services
     {
         var forecast = await httpClient
           .GetFromJsonAsync<Forecast>(
-            $"{Environment.GetEnvironmentVariable("OpenWeatherHost")}/data/2.5/weather?q={city}&appid={Environment.GetEnvironmentVariable("OpenWeatherApiKey")}&units=metric"
+            $"{settings.OpenWeatherHost}/data/2.5/weather?q={city}&appid={settings.OpenWeatherApiKey}&units=metric"
           );
 
         return forecast;

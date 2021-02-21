@@ -5,6 +5,15 @@
 Esse é um desafio backend proposto pelo iFood, usando o Open Weather Map e a API do Spotify.
 [Link do repositório original](https://github.com/ifood/vemproifood-backend)
 
+## Index
+
+- [iFood Backend Challenge](#ifood-backend-challenge)
+  - [Index](#index)
+  - [Tecnologias e ferramentas](#tecnologias-e-ferramentas)
+  - [Rotas e exemplos](#rotas-e-exemplos)
+  - [Regras de negócio](#regras-de-negócio)
+  - [Como rodar localmente](#como-rodar-localmente)
+
 ## Tecnologias e ferramentas
 
 * .NET 5
@@ -12,78 +21,88 @@ Esse é um desafio backend proposto pelo iFood, usando o Open Weather Map e a AP
 * [Spotify API](https://developer.spotify.com/)
 * HttpClient e WebClient
 * OAuth 2.0
+* Docker
 
+## Rotas e exemplos
 
-## Docker
+* `GET v1/:city` - return tracks suggestions based on weather forecast.
 
-1. Https Redirection (habilitar somente no ambiente de desenvolvimento)
-2. Gerar o Dockerfile (extensão Docker para o VSCode)
-   1. Ctrl + shift + P
-   2. docker: add dockerfile
-      1. ASP.NET Core
-      2. Linux
-      3. Porta 80
-      4. Não gera arquivo docker-compose
-3. Dockerfile (cada linha é um set de instruções que são aplicadas a imagem que será construída)
-
+Requisição: `GET v1/campinas`
 ```
-// [Base stage]
-// Dependencias para a imagem ser construída com ASP.NET Core
-FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
+{
+  "temperature": 23.16,
+  "city": "Campinas",
+  "country": "BR",
+  "tracks": [
+    {
+      "track": {
+        "name": "test drive",
+        "href": "https://api.spotify.com/v1/tracks/3eZYOQO4UzKrUDYDghtnFw",
+        "artists": [
+          {
+            "name": "Ariana Grande"
+          }
+        ]
+      }
+    },
+    {
+      "track": {
+        "name": "Save Your Tears",
+        "href": "https://api.spotify.com/v1/tracks/5QO79kh1waicV47BqGRL3g",
+        "artists": [
+          {
+            "name": "The Weeknd"
+          }
+        ]
+      }
+    },
 
-// "First stage" em que será construída a imagem
-WORKDIR /app
-
-// Expoe na porta 80
-EXPOSE 80
-
-// [Build stage]
-// Usa a imagem do .NETSDK, com as ferramentas para rodar uma app .NET
-// Essa imagem é maior, mais pesada, porque tem mais arquivos
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
-
-// Esse arquivos vão para o diretorio /src
-WORKDIR /src
-
-// Copia o arquivo .csproj, que tem todas as informações do projeto na raiz do diretorio em que estamos
-COPY ["iFoodOpenWeatherSpotify.csproj", "./"]
-
-// Restore em todos os pacotes da aplicacao
-RUN dotnet restore "iFoodOpenWeatherSpotify.csproj"
-
-// Copia todos os demais arquivos do projeto
-COPY . .
-
-
-WORKDIR "/src/."
-
-// dotnet build é um script do próprio .NET que vai construir a app  para o ambiente de produção
-// -c Release é para uma Release version do app
-// - o /app/build é para onde vai o resultado dessa build
-RUN dotnet build "iFoodOpenWeatherSpotify.csproj" -c Release -o /app/build
-
-// [publish stage]
-// Do stage build, que acabou de ser criado, para o stage publish
-FROM build AS publish
-
-// comando padrão do .NET, com as mesmas flags do comando build
-RUN dotnet publish "iFoodOpenWeatherSpotify.csproj" -c Release -o /app/publish
-
-// [final stage]
-//
-FROM base AS final
-WORKDIR /app
-
-// Copia tudo que está no stage build para /app/publish
-COPY --from=publish /app/publish .
-
-// Como iniciar a REST API
-// Nesse caso, executa o comando dotnet com o arquivo .dll
-ENTRYPOINT ["dotnet", "iFoodOpenWeatherSpotify.dll"]
-
+    ...
 ```
 
-4. Build a imagem do docker
-   `dotnet build -t [name:tag] .`
-   -t é uma tag para o nome da imagem e uma tag para ela
-5. 
+## Regras de negócio
+
+* `Temperatura > 30` - músicas para festa (`spotify genreId: party`)
+* `15 >= Temperatura >= 30` - músicas Pop (`spotify genreId: pop`)
+* `10 >= Temperatura > 15` - músicas de Rock (`spotify genreId: rock`)
+* `Temperatura < 10` - músicas classicas (`spotify genreId: classical`)
+
+## Como rodar localmente
+
+1. Faça um clone desse repositório
+   `git clone https://github.com/Pedrofiigueiredo/iFood-challenge`
+
+2. Configure as variáveis ambiente
+   * Adicione o seguinte código em `appsettings.json`
+   ```
+   "ServiceSettings": {
+    "OpenWeatherHost": "http://api.openweathermap.org",
+    "SpotifyHost": "https://api.spotify.com"
+   },
+   ```
+
+   * Cire um arquivo `ServiceSettings.cs` na raíz do projeto com o seguinte código:
+   ```
+   namespace iFoodOpenWeatherSpotify
+   {
+      public class ServiceSettings
+      {
+         public string OpenWeatherHost { get; set; }
+         public string OpenWeatherApiKey { get; set; }
+         public string SpotifyHost { get; set; }
+         public string SpotifyClientId { get; set; }
+         public string SpotifyClientSecret { get; set; }
+      }
+   }
+   ```
+
+   * Adicione as variáveis secretas:
+   `dotnet user-secrets init`  
+   `dotnet user-secrets set ServiceSettings:OpenWeatherApiKey {SUA_CHAVE}`  
+   `dotnet user-secrets set ServiceSettings:SpotifyClientId {SEU_ID}`
+   `dotnet user-secrets set ServiceSettings:SpotifyClientSecret {SEU_SECRET}`
+
+3. Para rodar utilize o comando `dotnet run`. O servidor irá iniciar em `https://localhost:5001`.
+
+
+`Obs1:` Para obter as keys para conectar com as APIs você terá que logar e copiá-las na aba de dashboard.

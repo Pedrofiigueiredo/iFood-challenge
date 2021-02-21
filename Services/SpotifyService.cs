@@ -29,7 +29,7 @@ namespace iFoodOpenWeatherSpotify.Services
     /// </summary>
     public async Task<string> Authentication()
     {
-      var authHeader = Convert.ToBase64String(Encoding.Default.GetBytes($"{Environment.GetEnvironmentVariable("SpotifyClientId")}:{Environment.GetEnvironmentVariable("SpotifyClientSecret")}"));
+      var authHeader = Convert.ToBase64String(Encoding.Default.GetBytes($"{settings.SpotifyClientId}:{settings.SpotifyClientSecret}"));
       var bodyParams = new NameValueCollection();
       bodyParams.Add("grant_type", "client_credentials");
 
@@ -60,7 +60,7 @@ namespace iFoodOpenWeatherSpotify.Services
     {
       var playlists = await httpClient
         .GetFromJsonAsync<PlaylistsData>(
-          $"{Environment.GetEnvironmentVariable("SpotifyHost")}/v1/browse/categories/{genre}/playlists?offset=0&limit=5"
+          $"{settings.SpotifyHost}/v1/browse/categories/{genre}/playlists?offset=0&limit=5"
         );
 
       return playlists;
