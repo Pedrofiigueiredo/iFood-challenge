@@ -23,9 +23,13 @@ namespace iFoodOpenWeatherSpotify.Services
     }
 
     public record Token(string access_token);
+
+    /// <summary> 
+    ///   Authenticate in spotify usign oauth2 client credentials method.
+    /// </summary>
     public async Task<string> Authentication()
     {
-      var authHeader = Convert.ToBase64String(Encoding.Default.GetBytes($"{settings.SpotifyClientId}:{settings.SpotifyClientSecret}"));
+      var authHeader = Convert.ToBase64String(Encoding.Default.GetBytes($"{Environment.GetEnvironmentVariable("SpotifyClientId")}:{Environment.GetEnvironmentVariable("SpotifyClientSecret")}"));
       var bodyParams = new NameValueCollection();
       bodyParams.Add("grant_type", "client_credentials");
 
@@ -47,11 +51,16 @@ namespace iFoodOpenWeatherSpotify.Services
     public record PlaylistItems(string name, string id);
     public record PlaylistsData(Playlists playlists);
 
+    /// <summary> Get playlists based in a music genre </summary>
+    /// <param name="genre">A string for spotify Genre Id</param>
+    /// <returns>
+    ///   JSON object with name and Id of each playlist
+    /// </returns>
     private async Task<PlaylistsData> GetPlaylistsByGenreAsync(string genre)
     {
       var playlists = await httpClient
         .GetFromJsonAsync<PlaylistsData>(
-          $"{settings.SpotifyHost}/v1/browse/categories/{genre}/playlists?offset=0&limit=5"
+          $"{Environment.GetEnvironmentVariable("SpotifyHost")}/v1/browse/categories/{genre}/playlists?offset=0&limit=5"
         );
 
       return playlists;
@@ -62,6 +71,11 @@ namespace iFoodOpenWeatherSpotify.Services
     public record TrackArtists(string name);
     public record TrackData(TrackItems[] items);
 
+    /// <summary> Get tracks for a playlists </summary>
+    /// <param name="playlistId">String spotify Playlist Id</param>
+    /// <returns>
+    ///   JSON object with name, href and artists name of each track
+    /// </returns>
     private async Task<TrackData> GetTracksFromPlaylistAsync(string playlistId)
     {
       var tracks = await httpClient
@@ -72,6 +86,11 @@ namespace iFoodOpenWeatherSpotify.Services
       return tracks;
     }
 
+    /// <summary> 
+    ///   Return a list of tracks of an especific genre
+    /// </summary>
+    /// <param name="genre">String GenreId</param>
+    /// <returns>JSON object with tracks data</returns>
     public async Task<TrackData> GetTracksByGenreAsync(string genre)
     {
       var res = await GetPlaylistsByGenreAsync(genre);

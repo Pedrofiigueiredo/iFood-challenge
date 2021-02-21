@@ -11,7 +11,7 @@ namespace iFoodOpenWeatherSpotify
     public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {
       Ping ping = new();
-      var reply = await ping.SendPingAsync("api.openweathermap.org");
+      var reply = await ping.SendPingAsync("http://api.openweathermap.org");
 
       if (reply.Status != IPStatus.Success)
         return HealthCheckResult.Unhealthy();

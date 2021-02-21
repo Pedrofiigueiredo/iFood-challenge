@@ -1,3 +1,4 @@
+using System;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -20,11 +21,16 @@ namespace iFoodOpenWeatherSpotify.Services
     public record Sys(string country);
     public record Forecast(Main main, string name, Sys sys);
 
+    /// <summary> Get current weather forecast of a city. </summary>
+    /// <param name="city">A string for city</param>
+    /// <returns>
+    ///   JSON object with current temperature, city and country.
+    /// </returns>
     public async Task<Forecast> GetCurrentWeatherAsync(string city)
     {
         var forecast = await httpClient
           .GetFromJsonAsync<Forecast>(
-            $"{settings.OpenWeatherHost}/data/2.5/weather?q={city}&appid={settings.OpenWeatherApiKey}&units=metric"
+            $"{Environment.GetEnvironmentVariable("OpenWeatherHost")}/data/2.5/weather?q={city}&appid={Environment.GetEnvironmentVariable("OpenWeatherApiKey")}&units=metric"
           );
 
         return forecast;
