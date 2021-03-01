@@ -9,11 +9,11 @@ namespace iFoodOpenWeatherSpotify.Controllers
   [Route("v1/")]
   public class WeatherForecastController : ControllerBase
   {
-	private readonly OpenWeatherService openWeatherService;
+    private readonly OpenWeatherService openWeatherService;
     private readonly SpotifyService spotifyService;
 
     public WeatherForecastController(OpenWeatherService openWeatherService, SpotifyService spotifyService)
-	{
+    {
         this.openWeatherService = openWeatherService;
         this.spotifyService = spotifyService;
     }

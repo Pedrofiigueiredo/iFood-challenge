@@ -1,13 +1,14 @@
-# iFood Backend Challenge
+# Tracker
 
-&#9881; Em desenvolvimento
+Uma API no formato de microsserviço para recomendar músicas de acordo com a temperatura de uma cidade, usando Open Weather Map e Spotify API.
 
-Esse é um desafio backend proposto pelo iFood, usando o Open Weather Map e a API do Spotify.
-[Link do repositório original](https://github.com/ifood/vemproifood-backend)
+![Tracker json view](.github/tracker-json-view.png)
+
+Esse é um desafio backend proposto pelo iFood, usando o Open Weather Map e a API do Spotify. [Link do repositório original](https://github.com/ifood/vemproifood-backend)
 
 ## Index
 
-- [iFood Backend Challenge](#ifood-backend-challenge)
+- [Tracker](#tracker)
   - [Index](#index)
   - [Tecnologias e ferramentas](#tecnologias-e-ferramentas)
   - [Rotas e exemplos](#rotas-e-exemplos)
@@ -19,7 +20,6 @@ Esse é um desafio backend proposto pelo iFood, usando o Open Weather Map e a AP
 * .NET 5
 * [Open Weather Map API](https://openweathermap.org/)
 * [Spotify API](https://developer.spotify.com/)
-* HttpClient e WebClient
 * OAuth 2.0
 * Docker
 
@@ -73,36 +73,12 @@ Requisição: `GET v1/campinas`
    `git clone https://github.com/Pedrofiigueiredo/iFood-challenge`
 
 2. Configure as variáveis ambiente
-   * Adicione o seguinte código em `appsettings.json`
-   ```
-   "ServiceSettings": {
-    "OpenWeatherHost": "http://api.openweathermap.org",
-    "SpotifyHost": "https://api.spotify.com"
-   },
-   ```
+   * `dotnet user-secrets init`  
+   * `dotnet user-secrets set ServiceSettings:OpenWeatherApiKey {SUA_CHAVE}`  
+   * `dotnet user-secrets set ServiceSettings:SpotifyClientId {SEU_ID}`
+   * `dotnet user-secrets set ServiceSettings:SpotifyClientSecret {SEU_SECRET}`
 
-   * Cire um arquivo `ServiceSettings.cs` na raíz do projeto com o seguinte código:
-   ```
-   namespace iFoodOpenWeatherSpotify
-   {
-      public class ServiceSettings
-      {
-         public string OpenWeatherHost { get; set; }
-         public string OpenWeatherApiKey { get; set; }
-         public string SpotifyHost { get; set; }
-         public string SpotifyClientId { get; set; }
-         public string SpotifyClientSecret { get; set; }
-      }
-   }
-   ```
-
-   * Adicione as variáveis secretas:
-   `dotnet user-secrets init`  
-   `dotnet user-secrets set ServiceSettings:OpenWeatherApiKey {SUA_CHAVE}`  
-   `dotnet user-secrets set ServiceSettings:SpotifyClientId {SEU_ID}`
-   `dotnet user-secrets set ServiceSettings:SpotifyClientSecret {SEU_SECRET}`
-
-3. Para rodar utilize o comando `dotnet run`. O servidor irá iniciar em `https://localhost:5001`.
+3. Para rodar utilize o comando `dotnet run`. O servidor vai iniciar em `https://localhost:5001`.
 
 
 `Obs1:` Para obter as keys para conectar com as APIs você terá que logar e copiá-las na aba de dashboard.
