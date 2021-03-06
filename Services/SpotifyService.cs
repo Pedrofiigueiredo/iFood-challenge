@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
-namespace iFoodOpenWeatherSpotify.Services
+namespace tracker.Services
 {
   public class SpotifyService
   {

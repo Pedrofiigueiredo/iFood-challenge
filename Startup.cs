@@ -1,5 +1,5 @@
 using System;
-using iFoodOpenWeatherSpotify.Services;
+using tracker.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -7,8 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Polly;
+using tracker.Repositories;
 
-namespace iFoodOpenWeatherSpotify
+namespace tracker
 {
   public class Startup
     {
@@ -26,9 +27,11 @@ namespace iFoodOpenWeatherSpotify
 
             services.AddControllers();
 
+            services.AddTransient<TracksRepository, TracksRepository>();
+
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "iFoodOpenWeatherSpotify", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "tracker", Version = "v1" });
             });
 
             services.AddHttpClient<OpenWeatherService>()
@@ -62,7 +65,7 @@ namespace iFoodOpenWeatherSpotify
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "iFoodOpenWeatherSpotify v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "tracker v1"));
             }
 
             if (env.IsDevelopment())

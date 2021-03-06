@@ -1,56 +1,32 @@
-﻿using System;
-using System.Threading.Tasks;
-using iFoodOpenWeatherSpotify.Services;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using tracker.Repositories;
 
-namespace iFoodOpenWeatherSpotify.Controllers
+namespace tracker.Controllers
 {
   [ApiController]
   [Route("v1/")]
-  public class WeatherForecastController : ControllerBase
+  public class TracksController : ControllerBase
   {
-    private readonly OpenWeatherService openWeatherService;
-    private readonly SpotifyService spotifyService;
+		private readonly TracksRepository _repository;
+		public TracksController(TracksRepository repository)
+		{
+			_repository = repository;
+		}
 
-    public WeatherForecastController(OpenWeatherService openWeatherService, SpotifyService spotifyService)
-    {
-        this.openWeatherService = openWeatherService;
-        this.spotifyService = spotifyService;
-    }
-
-	[HttpGet("{city}")]
-	public async Task<dynamic> GetTracksSuggestions(string city)
-	{
-        var forecast = await openWeatherService.GetCurrentWeatherAsync(city);
-        decimal temperature = forecast.main.temp;
-
-        await spotifyService.Authentication();
-        string genre = "";
-
-        switch (temperature)
-        {
-            case > 30:
-                genre = "party";
-                break;
-            case > 15:
-                genre = "pop";
-                break;
-            case > 10:
-                genre = "rock";
-                break;
-            case < 10:
-                genre = "classical";
-                break;
-        };
-
-        var tracks = await spotifyService.GetTracksByGenreAsync(genre);
-
-        return new {
-            temperature = forecast.main.temp,
-            city = forecast.name,
-            country = forecast.sys.country,
-            tracks = tracks.items
-        };
-	}
+		[HttpGet("{city}")]
+		public async Task<dynamic> Get(string city)
+		{
+			try
+			{
+				var data = await _repository.GetTracksSuggestions(city);
+			
+				return data;
+			}
+			catch
+			{
+				return "invalid city";
+			}
+		}
   }
 }

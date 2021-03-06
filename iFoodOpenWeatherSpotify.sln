@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iFoodOpenWeatherSpotify", "iFoodOpenWeatherSpotify.csproj", "{E6E94F72-1CD9-4238-BDD5-E4DEE4E5848E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tracker", "tracker.csproj", "{E6E94F72-1CD9-4238-BDD5-E4DEE4E5848E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

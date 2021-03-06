@@ -76,7 +76,7 @@ Requisição: `GET v1/campinas`
    * `dotnet user-secrets init`  
    * `dotnet user-secrets set ServiceSettings:OpenWeatherApiKey {SUA_CHAVE}`  
    * `dotnet user-secrets set ServiceSettings:SpotifyClientId {SEU_ID}`
-   * `dotnet user-secrets set ServiceSettings:SpotifyClientSecret {SEU_SECRET}
+   * `dotnet user-secrets set ServiceSettings:SpotifyClientSecret {SEU_SECRET}`
    
    `obs`: Vocẽ pode usar o comando `dotnet user-secrets list` para ver as variáveis adicionadas.
 

@@ -43,10 +43,10 @@ No *Dockerfile* cada linha é um set de instruções que são aplicadas à image
   WORKDIR /src
 
   # Copia o arquivo .csproj, que tem todas as informações do projeto na raiz do diretorio em que estamos
-  COPY ["iFoodOpenWeatherSpotify.csproj", "./"]
+  COPY ["tracker.csproj", "./"]
 
   # Restore em todos os pacotes da aplicacao
-  RUN dotnet restore "iFoodOpenWeatherSpotify.csproj"
+  RUN dotnet restore "tracker.csproj"
 
   # Copia todos os demais arquivos do projeto
   COPY . .
@@ -56,14 +56,14 @@ No *Dockerfile* cada linha é um set de instruções que são aplicadas à image
   # dotnet build: o script do .NET para construir a app no ambiente de produção
   # -c Release: flag para uma Release version do app
   # - o /app/build: flag que define para onde vai o resultado dessa build
-  RUN dotnet build "iFoodOpenWeatherSpotify.csproj" -c Release -o /app/build
+  RUN dotnet build "tracker.csproj" -c Release -o /app/build
 
   # [publish stage]
   # Do stage build, que acabou de ser criado, para o stage publish
   FROM build AS publish
 
   # Comando padrão do .NET, com as mesmas flags do comando build
-  RUN dotnet publish "iFoodOpenWeatherSpotify.csproj" -c Release -o /app/publish
+  RUN dotnet publish "tracker.csproj" -c Release -o /app/publish
 
   # [final stage]
   FROM base AS final
@@ -74,7 +74,7 @@ No *Dockerfile* cada linha é um set de instruções que são aplicadas à image
 
   # Como iniciar a REST API
   # Nesse caso, executa o comando dotnet com o arquivo .dll
-  ENTRYPOINT ["dotnet", "iFoodOpenWeatherSpotify.dll"]
+  ENTRYPOINT ["dotnet", "tracker.dll"]
 
 ```
 
@@ -84,7 +84,7 @@ No *Heroku*, por exemplo, há uma diferença:
 
 ``` Dockerfile
   # Forma para o Heroku
-  CMD ASPNETCORE_URLS=http://*:$PORT dotnet iFoodOpenWeatherSpotify.dll
+  CMD ASPNETCORE_URLS=http://*:$PORT dotnet tracker.dll
 ```
 
 Então, para *buildar* a imagem do docker:

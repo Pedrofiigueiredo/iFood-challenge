@@ -1,4 +1,4 @@
-namespace iFoodOpenWeatherSpotify
+namespace tracker
 {
   public class ServiceSettings
   {
